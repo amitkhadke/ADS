@@ -1,0 +1,132 @@
+show databases
+Product   8.00 KiB
+admin    40.00 KiB
+config   12.00 KiB
+local    40.00 KiB
+show collections
+use Product
+switched to db Product
+db.createCollection("inventory ")
+{ ok: 1 }
+show collections
+inventory 
+db.inventory .insertMany([{"id":"34090","Type":"RAW"},{"id":"34080","Type":"WIP"},{"id":"34022","Type":"MRO"}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("6530aec25a2b220557248e16"),
+    '1': ObjectId("6530aec25a2b220557248e17"),
+    '2': ObjectId("6530aec25a2b220557248e18")
+  }
+}
+db.inventory .insertMany([{"id":"4491","Name":"A"},{"id":"4489","Name":"B"},{"id":"4431","Name":"C"}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("6530af745a2b220557248e19"),
+    '1': ObjectId("6530af745a2b220557248e1a"),
+    '2': ObjectId("6530af745a2b220557248e1b")
+  }
+}
+db.inventory.updateOne({"id":"34080"},{$set:{"Type":"WIP","Number":"5"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.createCollection("customer")
+{ ok: 1 }
+db.customer.insertMany([{"id":"4491","Name":"A"},{"id":"4489","Name":"B"},{"id":"4431","Name":"C"}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("6530b0805a2b220557248e1c"),
+    '1': ObjectId("6530b0805a2b220557248e1d"),
+    '2': ObjectId("6530b0805a2b220557248e1e")
+  }
+}
+db.customer.updateOne({"id":"4491"},{$set:{"Name":"A","Username":"A@b"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.inventory.replaceOne({"id":"34080"},{"id":"34080","Type":"MRO"})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.customer.replaceOne({"id":"4431"},{"id":"4431","Name":"D"})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.inventory.deleteOne({"id":"34090"})
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+db.customer.deleteOne({"id":"4489"})
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+db.inventory.find
+[Function: find] AsyncFunction {
+  returnsPromise: true,
+  apiVersions: [ 1, Infinity ],
+  returnType: 'Cursor',
+  serverVersions: [ '0.0.0', '999.999.999' ],
+  topologies: [ 'ReplSet', 'Sharded', 'LoadBalanced', 'Standalone' ],
+  deprecated: false,
+  platforms: [ 'Compass', 'Browser', 'CLI' ],
+  isDirectShellCommand: false,
+  acceptsRawInput: false,
+  shellCommandCompleter: undefined,
+  help: [Function (anonymous)] Help
+}
+db.customer.find
+[Function: find] AsyncFunction {
+  returnsPromise: true,
+  apiVersions: [ 1, Infinity ],
+  returnType: 'Cursor',
+  serverVersions: [ '0.0.0', '999.999.999' ],
+  topologies: [ 'ReplSet', 'Sharded', 'LoadBalanced', 'Standalone' ],
+  deprecated: false,
+  platforms: [ 'Compass', 'Browser', 'CLI' ],
+  isDirectShellCommand: false,
+  acceptsRawInput: false,
+  shellCommandCompleter: undefined,
+  help: [Function (anonymous)] Help
+}
+db.inventory.find({"Type":"MRO"})
+{
+  _id: ObjectId("6530aec25a2b220557248e17"),
+  id: '34080',
+  Type: 'MRO'
+}
+{
+  _id: ObjectId("6530aec25a2b220557248e18"),
+  id: '34022',
+  Type: 'MRO'
+}
+db.customer.find({"Username":"A@b"})
+{
+  _id: ObjectId("6530b0805a2b220557248e1c"),
+  id: '4491',
+  Name: 'A',
+  Username: 'A@b'
+}
+Product
+Selection deleted
+

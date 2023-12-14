@@ -1,0 +1,173 @@
+Connected as akibmaner7865@gmail.com.
+Connected to cndb at cassandra.ingress:9042.
+[cqlsh 6.8.0 | Cassandra 4.0.0.6816 | CQL spec 3.4.5 | Native protocol v4 | TLS]
+Use HELP for help.
+token@cqlsh> desc keyspaces;
+
+data_endpoint_auth  datastax_sla   keyspaces1           
+system_auth         system         system_virtual_schema
+system_schema       system_traces  system_views         
+
+
+token@cqlsh> desc keyspaces1;
+
+CREATE KEYSPACE keyspaces1 WITH replication = {'class': 'NetworkTopologyStrategy', 'asia-south1': '3'}  AND durable_writes = true;
+token@cqlsh:keyspaces1>  create table emp(id int,name text, city text,designation text,exp float,primary key(id));
+token@cqlsh:keyspaces1> select * from emp
+              ... ;
+
+ id | city | designation | exp | name
+----+------+-------------+-----+------
+
+(0 rows)
+token@cqlsh:keyspaces1> insert into emp (id,name,city,designation,exp) values(10,'kunal','pune','associate professor',2.5);
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city | designation         | exp | name
+----+------+---------------------+-----+-------
+ 10 | pune | associate professor | 2.5 | kunal
+
+(1 rows)
+token@cqlsh:keyspaces1> insert into emp (id,name,city,designation,exp) values(11,'akash','kolhapur','professor',5);
+token@cqlsh:keyspaces1>  insert into emp (id,name,city,designation,exp) values(12,'chinar','kolhapur','lab assistant',3);
+token@cqlsh:keyspaces1> insert into emp (id,name,city,designation,exp) values(13,'Rutuja','kolhapur','junior professor',2);
+token@cqlsh:keyspaces1>  insert into emp (id,name,city,designation,exp) values(14,'Deeksha','nagpur','senior professor',9);
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | exp | name
+----+----------+---------------------+-----+---------
+ 10 |     pune | associate professor | 2.5 |   kunal
+ 13 | kolhapur |    junior professor |   2 |  Rutuja
+ 11 | kolhapur |           professor |   5 |   akash
+ 14 |   nagpur |    senior professor |   9 | Deeksha
+ 12 | kolhapur |       lab assistant |   3 |  chinar
+
+(5 rows)
+token@cqlsh:keyspaces1> update emp set exp=6 where id=11;
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | exp | name
+----+----------+---------------------+-----+---------
+ 10 |     pune | associate professor | 2.5 |   kunal
+ 13 | kolhapur |    junior professor |   2 |  Rutuja
+ 11 | kolhapur |           professor |   6 |   akash
+ 14 |   nagpur |    senior professor |   9 | Deeksha
+ 12 | kolhapur |       lab assistant |   3 |  chinar
+
+(5 rows)
+
+token@cqlsh:keyspaces1> select * from emp where id<13 ALLOW FILTERING;
+
+ id | city     | designation         | exp | name
+----+----------+---------------------+-----+--------
+ 10 |     pune | associate professor | 2.5 |  kunal
+ 11 | kolhapur |           professor |   6 |  akash
+ 12 | kolhapur |       lab assistant |   3 | chinar
+
+(3 rows)
+token@cqlsh:keyspaces1>  alter table emp add(email set<text>, expertise list<text>, prev_jobs map<text, int>);
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | email | exp | expertise | name    | prev_jobs
+----+----------+---------------------+-------+-----+-----------+---------+-----------
+ 10 |     pune | associate professor |  null | 2.5 |      null |   kunal |      null
+ 13 | kolhapur |    junior professor |  null |   2 |      null |  Rutuja |      null
+ 11 | kolhapur |           professor |  null |   6 |      null |   akash |      null
+ 14 |   nagpur |    senior professor |  null |   9 |      null | Deeksha |      null
+ 12 | kolhapur |       lab assistant |  null |   3 |      null |  chinar |      null
+
+(5 rows)
+token@cqlsh:keyspaces1> update emp set email=email+{'abc@gmail.com','kunal@gmail.com'} where id=10;
+token@cqlsh:keyspaces1>  select * from emp;
+
+ id | city     | designation         | email                                | exp | expertise | name    | prev_jobs
+----+----------+---------------------+--------------------------------------+-----+-----------+---------+-----------
+ 10 |     pune | associate professor | {'abc@gmail.com', 'kunal@gmail.com'} | 2.5 |      null |   kunal |      null
+ 13 | kolhapur |    junior professor |                                 null |   2 |      null |  Rutuja |      null
+ 11 | kolhapur |           professor |                                 null |   6 |      null |   akash |      null
+ 14 |   nagpur |    senior professor |                                 null |   9 |      null | Deeksha |      null
+ 12 | kolhapur |       lab assistant |                                 null |   3 |      null |  chinar |      null
+
+(5 rows)
+token@cqlsh:keyspaces1> update emp set expertise=['java','unix'] where id=10;
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | email                                | exp | expertise        | name    | prev_jobs
+----+----------+---------------------+--------------------------------------+-----+------------------+---------+-----------
+ 10 |     pune | associate professor | {'abc@gmail.com', 'kunal@gmail.com'} | 2.5 | ['java', 'unix'] |   kunal |      null
+ 13 | kolhapur |    junior professor |                                 null |   2 |             null |  Rutuja |      null
+ 11 | kolhapur |           professor |                                 null |   6 |             null |   akash |      null
+ 14 |   nagpur |    senior professor |                                 null |   9 |             null | Deeksha |      null
+ 12 | kolhapur |       lab assistant |                                 null |   3 |             null |  chinar |      null
+
+(5 rows)
+token@cqlsh:keyspaces1> update emp set prev_jobs=prev_jobs+{'DYP':2019} where id=10;
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | email                                | exp | expertise        | name    | prev_jobs
+----+----------+---------------------+--------------------------------------+-----+------------------+---------+---------------
+ 10 |     pune | associate professor | {'abc@gmail.com', 'kunal@gmail.com'} | 2.5 | ['java', 'unix'] |   kunal | {'DYP': 2019}
+ 13 | kolhapur |    junior professor |                                 null |   2 |             null |  Rutuja |          null
+ 11 | kolhapur |           professor |                                 null |   6 |             null |   akash |          null
+ 14 |   nagpur |    senior professor |                                 null |   9 |             null | Deeksha |          null
+ 12 | kolhapur |       lab assistant |                                 null |   3 |             null |  chinar |          null
+
+(5 rows)
+token@cqlsh:keyspaces1> delete from emp where id=12;
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | email                                | exp | expertise        | name    | prev_jobs
+----+----------+---------------------+--------------------------------------+-----+------------------+---------+---------------
+ 10 |     pune | associate professor | {'abc@gmail.com', 'kunal@gmail.com'} | 2.5 | ['java', 'unix'] |   kunal | {'DYP': 2019}
+ 13 | kolhapur |    junior professor |                                 null |   2 |             null |  Rutuja |          null
+ 11 | kolhapur |           professor |                                 null |   6 |             null |   akash |          null
+ 14 |   nagpur |    senior professor |                                 null |   9 |             null | Deeksha |          null
+
+(4 rows)
+token@cqlsh:keyspaces1>  delete city from emp where id=14;
+token@cqlsh:keyspaces1> select * from emp;
+
+ id | city     | designation         | email                                | exp | expertise        | name    | prev_jobs
+----+----------+---------------------+--------------------------------------+-----+------------------+---------+---------------
+ 10 |     pune | associate professor | {'abc@gmail.com', 'kunal@gmail.com'} | 2.5 | ['java', 'unix'] |   kunal | {'DYP': 2019}
+ 13 | kolhapur |    junior professor |                                 null |   2 |             null |  Rutuja |          null
+ 11 | kolhapur |           professor |                                 null |   6 |             null |   akash |          null
+ 14 |     null |    senior professor |                                 null |   9 |             null | Deeksha |          null
+
+(4 rows)
+token@cqlsh:keyspaces1> create table product(id uuid,name text,price float,quant int,primary key(id));
+token@cqlsh:keyspaces1>  select * from product;
+
+ id | name | price | quant
+----+------+-------+-------
+
+(0 rows)
+token@cqlsh:keyspaces1>  insert into product(id,name,price,quant) values(uuid(),'hdmi cable',500,12);
+token@cqlsh:keyspaces1> insert into product(id,name,price,quant) values(uuid(),'projetor',10000,10);
+token@cqlsh:keyspaces1>  select * from product;
+
+ id                                   | name       | price | quant
+--------------------------------------+------------+-------+-------
+ 781f5434-c3ab-4f91-bc32-ee9ce3b07af3 | hdmi cable |   500 |    12
+ 11145071-fd24-40df-b17a-ff326b97816e |   projetor | 10000 |    10
+
+(2 rows)
+token@cqlsh:keyspaces1> alter table product add(inv_date timestamp, available boolean);
+token@cqlsh:keyspaces1> select * from product;
+
+ id                                   | available | inv_date | name       | price | quant
+--------------------------------------+-----------+----------+------------+-------+-------
+ 781f5434-c3ab-4f91-bc32-ee9ce3b07af3 |      null |     null | hdmi cable |   500 |    12
+ 11145071-fd24-40df-b17a-ff326b97816e |      null |     null |   projetor | 10000 |    10
+
+(2 rows)
+token@cqlsh:keyspaces1>  update product set inv_date=toTimestamp(now()) where id=6f72caf4-3639-486d-b55f-747c1d219906;
+token@cqlsh:keyspaces1> select * from product;
+
+ id                                   | available | inv_date                        | name       | price | quant
+--------------------------------------+-----------+---------------------------------+------------+-------+-------
+ 6f72caf4-3639-486d-b55f-747c1d219906 |      null | 2023-10-26 05:03:54.923000+0000 |       null |  null |  null
+ 781f5434-c3ab-4f91-bc32-ee9ce3b07af3 |      null |                            null | hdmi cable |   500 |    12
+ 11145071-fd24-40df-b17a-ff326b97816e |      null |                            null |   projetor | 10000 |    10
+
+(3 rows)
